@@ -1,0 +1,17 @@
+{
+  "name": "ng-offlinedb",
+  "version": "0.1.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sparkgeo <dustin@sparkgeo.com",
+  "license": "MIT",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.1",
+    "uglifyjs": "^2.4.10"
+  }
+}

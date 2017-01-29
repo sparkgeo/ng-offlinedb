@@ -1,0 +1,23 @@
+{
+  "name": "ng-offlinedb",
+  "authors": [
+    "Sparkgeo <dustin@sparkgeo.com>"
+  ],
+  "description": "",
+  "main": "dist/ng-offlinedb.js",
+  "license": "MIT",
+  "homepage": "https://sparkgeo.com",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "src",
+    ".gitignore",
+    "gruntfile.js",
+    "package.json",
+    "README.md"
+  ],
+  "devDependencies": {
+    "angular": ">=1.3.4",
+    "dexie": "^1.5.1"
+  }
+}
