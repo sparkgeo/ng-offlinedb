@@ -22,7 +22,7 @@ deployment:
     commands:
       - git config user.email $GIT_EMAIL
       - git config user.name $GIT_NAME
-      - git checkout -b master origin/master
+      - git checkout master
       - git merge $CIRCLE_TAG
       - git commit -m '$CIRCLE_TAG merge'
       - git push origin master
