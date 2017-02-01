@@ -1,17 +1,25 @@
 {
   "name": "ng-offlinedb",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "",
-  "main": "gulpfile.js",
+  "main": "./src/ng-offlinedb.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sparkgeo/ng-offlinedb.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Sparkgeo <dustin@sparkgeo.com",
+  "author": "Sparkgeo <dustin@sparkgeo.com>",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
+    "bower": "^1.8.0",
     "gulp": "^3.9.1",
+    "gulp-jshint": "^2.0.4",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^2.0.1",
-    "uglifyjs": "^2.4.10"
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "gulp-connect": "^5.0.0"
   }
 }

@@ -12,11 +12,13 @@
     "bower_components",
     "src",
     ".gitignore",
-    "gruntfile.js",
+    "bower.json",
+    "gulpfile.js",
     "package.json",
-    "README.md"
+    ".jshintrc",
+    "circle.yml"
   ],
-  "devDependencies": {
+  "dependencies": {
     "angular": ">=1.3.4",
     "dexie": "^1.5.1"
   }
