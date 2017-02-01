@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ng-offlinedb test</title>
+    <style type="text/css">
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+        }
+        #box {
+          width: 600px;
+          margin: 50px auto 0px;
+          border: 1px solid #ccc;
+          padding: 15px;
+        }
+        li {
+          list-style: none;
+        }
+        a {
+          color: #888;
+        }
+        input {
+          height: 25px;
+          width: 100%;
+        }
+    </style>
+</head>
+<body ng-app="example" ng-controller="ExampleCtrl">
+
+    <div id="box">
+        <form name="form" ng-submit="addItem()">
+            <input type="text" name="new_item" ng-model="new_item" placeholder="Add item" autocomplete="off">
+        </form>
+        <ul>
+            <li ng-repeat="item in items track">&#8594; {{item.text}} <a href="" ng-click="removeItem(item)">remove</a></li>
+
+        </ul>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dexie/1.5.1/dexie.js"></script>
+    <script src="/src/ng-offlinedb.js"></script>
+
+    <script type="text/javascript">
+      angular.module('example', ['ng-offlinedb'])
+      .controller('ExampleCtrl', [
+        '$scope',
+        'OfflineDb',
+        function($scope, OfflineDb) {
+          // OfflineDb will ignore remote syncing
+          // if not defined
+          var remote_url = null;
+          
+          var db = new OfflineDb('offlineexample', remote_url, {
+            offlineDbPrimaryKey: 'pk', // defaults to `id` if not defined
+            offlineDbIndicies: '&pk'
+          });
+          $scope.new_item = null;
+          $scope.items = [];yeah
+
+          $scope.listItems = function() {
+            db.filter().then(function(records) {
+              $scope.$apply($scope.items = records);
+            });
+          };
+
+          $scope.addItem = function() {
+            db.create({
+              'text': $scope.new_item
+            }).then(function(record) {
+              $scope.items.push(record);
+              $scope.$apply($scope.new_item = null);
+            });
+          };
+
+          $scope.removeItem = function(item) {
+            var idx = $scope.items.indexOf(item);
+            item.delete().then(function() {
+              $scope.items.splice(idx, 1);
+              $scope.$apply($scope.items);
+            });
+          };
+          $scope.listItems();
+        }
+      ]);
+
+    </script>
+
+</body>
+</html>

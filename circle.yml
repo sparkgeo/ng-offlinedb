@@ -1,0 +1,29 @@
+test:
+  override:
+    - gulp test
+machine:
+  node:
+    version: 6.3.1
+dependencies:
+  post:
+    - bower install
+deployment:
+  develop:
+    branch: develop
+    commands:
+      - gulp build
+      - git config user.email $GIT_EMAIL
+      - git config user.name $GIT_NAME
+      - UNSTAGED_FILES=0
+      - git diff-index --quiet HEAD -- || UNSTAGED_FILES=1;
+      - if [ $UNSTAGED_FILES -eq 1 ]; then git add . && git commit -m "build" && git push origin HEAD;fi
+  master:
+    tag: /[0-9]+(\.[0-9]+)+(-rc[0-9]+)?/
+    commands:
+      - git config user.email $GIT_EMAIL
+      - git config user.name $GIT_NAME
+      - git checkout -b master origin/master
+      - git merge $CIRCLE_TAG
+      - git commit -m '$CIRCLE_TAG merge'
+      - git push origin master
+    
