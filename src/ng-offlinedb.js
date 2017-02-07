@@ -74,7 +74,9 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
         self.db.version(DB_VERSION).stores(schema);
 
         function _get_resource_url(pk) {
-          if (self.remote_url == null) { return null; }
+          if (self.remote_url == null) {
+            return null;
+          }
 
           var url = self.remote_url;
           if (pk) {
@@ -89,7 +91,7 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
           data.$$synced = synced;
           data.$$deleted = deleted;
           return self.db.transaction('rw?', self.db[opts.offlineTableName], function() {
-            return self.db[opts.offlineTableName].put(data).then(function () {
+            return self.db[opts.offlineTableName].put(data).then(function() {
               return data;
             });
           });
@@ -121,21 +123,20 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
             return $http.post(url, r_record).then(function() {
               return _save(record, true);
             });
-          }
-          else if (action === 'put') {
+          } else if (action === 'put') {
             url = _get_resource_url(pk);
             // Strip 'system' properties
             var r_data = angular.fromJson(angular.toJson(record));
             return $http.put(url, r_data).then(function() {
               return _save(record, true);
             });
-          }
-          else if (action === 'delete') {
+          } else if (action === 'delete') {
             url = _get_resource_url(pk);
             return $http.delete(url).then(function() {
               return _delete(pk);
             });
           }
+          throw action + ' not supported';
         }
 
         self.filter = function(qry_args) {
@@ -154,8 +155,7 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
                 }
                 return is_match;
               }
-              
-            });  
+            });
           });
         };
 
@@ -165,9 +165,9 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
           }));
         };
 
-        self.create = function(record) {
+        function _create(pk, record, synced) {
           var rec;
-          var pk = generateUuid();
+          synced = synced || false;
 
           // Prep new record
           record[opts.offlineDbPrimaryKey] = pk;
@@ -175,11 +175,46 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
           rec.$$synced = false;
           rec.$$deleted = false;
 
-          return _save(rec).then(function() {
-            rec = angular.extend(new OfflineRecord(), rec);
-            return _remoteSync('post', rec);            
+          return _save(rec);
+        }
+
+        self.create = function(record) {
+          var pk = generateUuid();
+
+          return _create(pk, record).then(function(rec) {
+            return _remoteSync('post', angular.extend(new OfflineRecord(), rec));
           });
         };
+
+        // Add remote record directly to local database, creates 
+        // OfflineRecord but doesn't try to remotely sync.  If
+        // record already exsists locally the record is no added.
+        // Example:
+        // 
+        // var db = OfflineDb(APP_CONFIG.localDbName, 'https://test.com/records/');
+        // $http.get(offlinedb.remote_url).then(function(resp) {
+        //   angular.forEach(resp.data.results, function(rec) {
+        //     db.addRemoteRecord(rec);
+        //   });
+        // });
+        // 
+        self.addRemoteRecord = function(record) {
+          var pk = record[opts.offlineDbPrimaryKey]; 
+          if (pk == null) {
+            throw 'Primary key not defined';
+          }
+          // Check to see if record already exists
+          return self.get(pk).then(function(r) {
+            if (r == null) {
+              return _create(pk, record, true)
+            }
+          });
+        };
+
+        self.clear = function() {
+          return self.db[opts.offlineTableName].clear();
+        };
+
 
         /**************************************
          *                                     *
@@ -228,11 +263,11 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
         $window.addEventListener('online', function() {
           is_online = true;
           self.db[opts.offlineTableName]
-              .where('$$synced')
-              .equals(false)
-              .each(function(record) {
-                  record.remote_sync();
-              });
+            .where('$$synced')
+            .equals(false)
+            .each(function(record) {
+              record.remote_sync();
+            });
 
         }, false);
 
