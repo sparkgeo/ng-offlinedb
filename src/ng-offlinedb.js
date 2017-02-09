@@ -215,6 +215,15 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
           return self.db[opts.offlineTableName].clear();
         };
 
+        // Tries to remotely sync any records in
+        // local storage that aren't synced.
+        self.syncBacklog = function() {
+          self.filter({$$synced: false}).then(function(records) {
+            angular.forEach(records, function(record) {
+                record.remote_sync();
+            });
+          });
+        };
 
         /**************************************
          *                                     *
@@ -262,12 +271,7 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
         // process any records that haven't been synced.
         $window.addEventListener('online', function() {
           is_online = true;
-          self.db[opts.offlineTableName]
-            .where('$$synced')
-            .equals(false)
-            .each(function(record) {
-              record.remote_sync();
-            });
+          self.syncBacklog();
 
         }, false);
 
