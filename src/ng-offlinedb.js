@@ -161,6 +161,9 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
 
         self.get = function(pk) {
           return $q.when(self.db[opts.offlineTableName].get(pk, function(record) {
+            if (record.$$deleted) {
+              return null;
+            }
             return record;
           }));
         };
