@@ -209,7 +209,7 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
           // Check to see if record already exists
           return self.get(pk).then(function(r) {
             if (r == null) {
-              return _create(pk, record, true)
+              return _create(pk, record, true);
             }
           });
         };
@@ -227,6 +227,7 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
             });
           });
         };
+
 
         /**************************************
          *                                     *
