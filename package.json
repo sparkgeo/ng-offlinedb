@@ -1,6 +1,5 @@
 {
   "name": "ng-offlinedb",
-  "version": "0.1.5",
   "description": "",
   "main": "./src/ng-offlinedb.js",
   "repository": {
