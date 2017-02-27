@@ -153,9 +153,15 @@ angular.module('ng-offlinedb', []).factory('OfflineDb', [
                   is_match = false;
                   break;
                 }
-                return is_match;
               }
+              return is_match;
             });
+          });
+        };
+
+        self.count = function() {
+          return self.filter().then(function(recs) {
+            return recs.length;
           });
         };
 
